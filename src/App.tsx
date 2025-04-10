@@ -152,17 +152,14 @@ function App() {
 
 
   const getZoneMsg = (currentAngle: number): string => {
-    const progress = (frameCountRef.current * 0.01) % (Math.PI * 2);
-    console.table({
-      Zone: ZONES[0].msg,
-      Start: ZONES[0].start,
-      End: ZONES[0].end,
-      CurrentAngle: currentAngle,
-      progress
-    });
-    
     for (const zone of ZONES) {
       if (currentAngle >= zone.start && currentAngle <= zone.end) {
+        console.table({
+          Zone: zone.msg,
+          Start: zone.start,
+          End: zone.end,
+          CurrentAngle: currentAngle,
+        });
         return zone.msg;
       }
     }
