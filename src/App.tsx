@@ -1,15 +1,31 @@
 import { useRef, useEffect, useState } from 'react'
 
 const MAX_TRY_COUNT = 3;
+const SPEED = 3;
+
 
 const ZONES = [
-  { start: Math.PI * 0, end: Math.PI * 0.25, color: 'rgba(0, 255, 0, 0.3)', strokeColor: 'rgba(0, 200, 0, 0.8)', msg: "Green" },
-  { start: Math.PI * 0.25, end: Math.PI * 0.35, color: 'rgba(255, 255, 0, 0.3)', strokeColor: 'rgba(200, 200, 0, 0.8)', msg: "Yellow" },
-  { start: Math.PI * 0.35, end: Math.PI * 0.45, color: 'rgba(255, 165, 0, 0.3)', strokeColor: 'rgba(200, 140, 0, 0.8)', msg:  "Orange" },
-  { start: Math.PI * 0.45, end: Math.PI * 0.55, color: 'rgba(255, 0, 0, 0.3)', strokeColor: 'rgba(200, 0, 0, 0.8)', msg: "Red" }, 
-  { start: Math.PI * 0.55, end: Math.PI * 0.65, color: 'rgba(255, 165, 0, 0.3)', strokeColor: 'rgba(200, 140, 0, 0.8)', msg: "Orange" },
-  { start: Math.PI * 0.65, end: Math.PI * 0.75, color: 'rgba(255, 255, 0, 0.3)', strokeColor: 'rgba(200, 200, 0, 0.8)', msg: "Yellow" },
-  { start: Math.PI * 0.75, end: Math.PI * 1, color: 'rgba(0, 255, 0, 0.3)', strokeColor: 'rgba(0, 200, 0, 0.8)', msg: "Green" },
+  {
+    start: Math.PI * 0,
+    end: Math.PI * 0.5,
+    color: 'rgba(0, 255, 0, 0.3)',
+    strokeColor: 'rgba(0, 200, 0, 0.8)',
+    msg: "ZONE_TYPE.GREEN",
+  },
+  {
+    start: Math.PI * 0.5,
+    end: Math.PI * 0.7,
+    color: 'rgba(38, 0, 255, 0.3)',
+    strokeColor: 'rgba(38, 0, 255, 0.8)',
+    msg:" ZONE_TYPE.BLUE",
+  },
+  {
+    start: Math.PI * 0.7,
+    end: Math.PI * 1,
+    color: 'rgba(0, 255, 0, 0.3)',
+    strokeColor: 'rgba(0, 200, 0, 0.8)',
+    msg: "ZONE_TYPE.GREEN",
+  },
 ];
 
 function App() {
@@ -72,8 +88,9 @@ function App() {
     drawCircle(canvasRef.current, ctx);
     drawZones(canvasRef.current, ctx);
     
-    const progress = (frameCount * 0.01) % (Math.PI * 2);
+    const progress = (frameCount * 0.01 * SPEED) % (Math.PI * 2);
     const currentAngle = progress <= Math.PI ? progress : Math.PI * 2 - progress;
+    
     drawPointer(canvasRef.current, ctx, -currentAngle);
   }
 
@@ -105,12 +122,12 @@ function App() {
 
       ctx.beginPath();
       ctx.moveTo(centerX, centerY);
-      ctx.lineWidth = 2;
+      ctx.lineWidth = 1;
       ctx.strokeStyle = '#3366FF';
       ctx.stroke();
 
       ctx.beginPath();
-      ctx.arc(pointerY, pointerX, 15, 0, Math.PI * 2);
+      ctx.arc(pointerY, pointerX, 5, 0, Math.PI * 2);
       ctx.fillStyle = '#3366FF';
       ctx.fill();
     } catch (e) {
@@ -153,13 +170,13 @@ function App() {
 
   const getZoneMsg = (currentAngle: number): string => {
     for (const zone of ZONES) {
+      console.table({
+        Zone: zone.msg,
+        Start: zone.start,
+        End: zone.end,
+        CurrentAngle: currentAngle,
+      });
       if (currentAngle >= zone.start && currentAngle <= zone.end) {
-        console.table({
-          Zone: zone.msg,
-          Start: zone.start,
-          End: zone.end,
-          CurrentAngle: currentAngle,
-        });
         return zone.msg;
       }
     }
@@ -167,10 +184,13 @@ function App() {
     return "Green";
   }
 
+
   const checkZones = () => {
-    const progress = (frameCountRef.current * 0.01) % (Math.PI * 2);
+
+    const progress = (frameCountRef.current * 0.01 * SPEED) % (Math.PI * 2);
     const currentAngle = progress <= Math.PI ? progress : Math.PI * 2 - progress;
      
+    console.table({progress, currentAngle});
     const msg = getZoneMsg(Math.abs(currentAngle));
     setResultMsg(msg);
   }
